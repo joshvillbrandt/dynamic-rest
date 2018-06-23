@@ -283,7 +283,7 @@ class WithDynamicViewSetMixin(object):
     def _get_posted_fields(self):
         data = self.request.data
         if not data:
-            return []
+            return {}
 
         if self.serializer_class.get_name() in data:
             data = data[self.serializer_class.get_name()]
