@@ -280,6 +280,16 @@ class WithDynamicViewSetMixin(object):
         else:
             return False
 
+    def _get_posted_fields(self):
+        data = self.request.data
+        if not data:
+            return []
+
+        if self.serializer_class.get_name() in data:
+            data = data[self.serializer_class.get_name()]
+
+        return {k: True for k in data.keys()}
+
     def get_serializer(self, *args, **kwargs):
         if 'request_fields' not in kwargs:
             kwargs['request_fields'] = self.get_request_fields()
@@ -290,7 +300,10 @@ class WithDynamicViewSetMixin(object):
         if 'envelope' not in kwargs:
             kwargs['envelope'] = True
         if self.is_update():
-            kwargs['include_fields'] = '*'
+            # Implicitly convert posted fields into request fields
+            request_fields = self._get_posted_fields()
+            request_fields.update(kwargs['request_fields'])
+            kwargs['request_fields'] = request_fields
         return super(
             WithDynamicViewSetMixin, self
         ).get_serializer(

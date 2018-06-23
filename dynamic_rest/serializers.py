@@ -7,6 +7,7 @@ import inflection
 from django.db import models
 from django.utils import six
 from django.utils.functional import cached_property
+from rest_framework import __version__ as drf_version
 from rest_framework import exceptions, fields, serializers
 from rest_framework.relations import RelatedField
 from rest_framework.fields import SkipField
@@ -32,6 +33,7 @@ OPTS = {
     'ENABLE_FIELDS_CACHE': os.environ.get('ENABLE_FIELDS_CACHE', False)
 }
 FIELDS_CACHE = {}
+DRF_VERSION = drf_version.split()
 
 
 class WithResourceKeyMixin(object):
@@ -684,9 +686,10 @@ class WithDynamicSerializerMixin(
             **kwargs
         )
         view = self._context.get('view')
-        if update and view:
+        if view and update and DRF_VERSION[0] <= 3 and DRF_VERSION[1] < 5:
             # Reload the object on update
             # to get around prefetch cache issues
+            # Fixed in DRF in 3.5.0
             instance = self.instance = view.get_object()
         return instance
 
