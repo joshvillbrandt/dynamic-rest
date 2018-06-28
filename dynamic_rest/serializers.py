@@ -686,11 +686,12 @@ class WithDynamicSerializerMixin(
             **kwargs
         )
         view = self._context.get('view')
-        if view and update and DRF_VERSION[0] <= 3 and DRF_VERSION[1] < 5:
-            # Reload the object on update
-            # to get around prefetch cache issues
-            # Fixed in DRF in 3.5.0
-            instance = self.instance = view.get_object()
+        if view and update:
+            if int(DRF_VERSION[0]) <= 3 and int(DRF_VERSION[1]) < 5:
+                # Reload the object on update
+                # to get around prefetch cache issues
+                # Fixed in DRF in 3.5.0
+                instance = self.instance = view.get_object()
         return instance
 
     def id_only(self):
