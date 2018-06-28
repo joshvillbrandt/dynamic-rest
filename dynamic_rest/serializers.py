@@ -33,7 +33,7 @@ OPTS = {
     'ENABLE_FIELDS_CACHE': os.environ.get('ENABLE_FIELDS_CACHE', False)
 }
 FIELDS_CACHE = {}
-DRF_VERSION = drf_version.split()
+DRF_VERSION = drf_version.split('.')
 
 
 class WithResourceKeyMixin(object):
